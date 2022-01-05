@@ -4520,14 +4520,14 @@ module.controller('RealmImportCtrl', function($scope, realm, $route,
     $scope.save = function() {
         var json = angular.copy($scope.fileContent);
         json.ifResourceExists = $scope.ifResourceExists;
-        if (!$scope.importUsers) delete json.users;
-        if (!$scope.importGroups) delete json.groups;
-        if (!$scope.importIdentityProviders) delete json.identityProviders;
-        if (!$scope.importClients) delete json.clients;
+        if (!$scope.importUsers || !$scope.access.manageUsers) delete json.users;
+        if (!$scope.importGroups || !$scope.access.manageUsers) delete json.groups;
+        if (!$scope.importIdentityProviders || !$scope.access.manageIdentityProviders) delete json.identityProviders;
+        if (!$scope.importClients || !$scope.access.manageClients) delete json.clients;
         
         if (json.hasOwnProperty('roles')) {
-            if (!$scope.importRealmRoles) delete json.roles.realm;
-            if (!$scope.importClientRoles) delete json.roles.client;
+            if (!$scope.importRealmRoles || !$scope.access.manageRealm) delete json.roles.realm;
+            if (!$scope.importClientRoles || !$scope.access.manageClients) delete json.roles.client;
         }
         
         var importFile = $resource(authUrl + '/admin/realms/' + realm.realm + '/partialImport');
