@@ -1015,6 +1015,22 @@ public class RealmAdminResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response partialImport(InputStream requestBody) {
         auth.realm().requireManageRealm();
+        if (rep.hasClients() || rep.hasClientRoles()) {
+            auth.clients().requireManage();
+        }
+        if (rep.hasGroups()) {
+            auth.groups().requireManage();
+        }
+        if (rep.hasUsers()) {
+            auth.users().requireManage();
+        }
+        if (rep.hasRealmRoles()) {
+            auth.realm().requireManageRealm();
+        }
+        if (rep.hasIdps()) {
+            auth.realm().requireManageIdentityProviders();
+        }
+
         try {
             return Response.ok(
                     KeycloakModelUtils.runJobInTransactionWithResult(session.getKeycloakSessionFactory(), kcSession -> {
